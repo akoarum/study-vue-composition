@@ -1,7 +1,7 @@
 <template>
   <div>
-    <ToDoForm v-model="state.value" @click="addToDo" />
-    <ToDoList :todos="state.todos" @update-completed="updateCompleted" />
+    <ToDoForm v-model="inputValue" @click="addToDo" />
+    <ToDoList :todos="todos" @update-completed="updateCompleted" />
   </div>
 </template>
 
@@ -22,39 +22,38 @@ interface State {
   todos: ToDo[]
 }
 
+const useToDo = () => {
+  const inputValue = ref<string>('')
+  const todos = ref<ToDo[]>([])
+  const addToDo = () => {
+    if (!inputValue) return
+    todos.value = todos.value.concat([
+      {
+        id: uuidv4(),
+        text: inputValue.value,
+        isCompleted: false
+      }
+    ])
+    inputValue.value = ''
+  }
+  const updateCompleted = (id: string) => {
+    todos.value.map((todo: ToDo) => {
+      if (todo.id !== id) return todo
+      return {
+        ...todo,
+        isCompleted: !todo.isCompleted
+      }
+    })
+  }
+
+  return { inputValue, todos, addToDo, updateCompleted }
+}
+
 export default createComponent({
   components: { ToDoForm, ToDoList },
   setup() {
-    const state: any = reactive<State>({
-      value: '',
-      todos: []
-    })
-    const addToDo = () => {
-      if (!state.value) return
-      state.todos = state.todos.concat([
-        {
-          id: uuidv4(),
-          text: state.value,
-          isCompleted: false
-        }
-      ])
-      state.value = ''
-    }
-    const updateCompleted = (id: string) => {
-      state.todos = state.todos.map((todo: ToDo) => {
-        if (todo.id !== id) return todo
-        return {
-          ...todo,
-          isCompleted: !todo.isCompleted
-        }
-      })
-    }
-
-    return {
-      state,
-      addToDo,
-      updateCompleted
-    }
+    const { inputValue, todos, addToDo, updateCompleted } = useToDo()
+    return { inputValue, todos, addToDo, updateCompleted }
   }
 })
 </script>
