@@ -1,16 +1,14 @@
 <template>
   <div id="app">
-    <ToDo />
+    <router-view />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import ToDo from './components/ToDo.vue'
 
 export default Vue.extend({
-  name: 'app',
-  components: { ToDo }
+  name: 'app'
 })
 </script>
 
